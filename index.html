@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Digital Desktop of Memories</title>
+  <link rel="stylesheet" href="https://unpkg.com/xp.css@0.2.6/dist/XP.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Иконки приложений -->
+  <div id="desktop">
+    <div class="icon" data-app="cards">
+      <img src="assets/images/icons/cards.png" alt="Cards">
+      <div>cards.exe</div>
+    </div>
+    <div class="icon" data-app="photobooth">
+      <img src="assets/images/icons/gallery.png" alt="Photobooth">
+      <div>photobooth.exe</div>
+    </div>
+    <div class="icon" data-app="dreams">
+      <img src="assets/images/icons/notes.png" alt="Dreams">
+      <div>dreams.txt</div>
+    </div>
+    <div class="icon" data-app="bubble_chat">
+      <img src="assets/images/icons/chat.png" alt="Bubble Chat">
+      <div>bubble_chat.exe</div>
+    </div>
+    <div class="icon" data-app="memories_player">
+      <img src="assets/images/icons/player.png" alt="Memories Player">
+      <div>memories_player.exe</div>
+    </div>
+    <div class="icon" data-app="weather_of_the_day">
+      <img src="assets/images/icons/weather.png" alt="Weather">
+      <div>weather_of_the_day.exe</div>
+    </div>
+  </div>
+
+  <!-- Окно для приложений -->
+  <div id="app-window" class="window">
+    <div class="window-header">
+      <span id="window-title">App</span>
+      <button id="close-window" style="float:right;">X</button>
+    </div>
+    <div class="window-body" id="window-content">
+      <!-- Тут будет iframe или контент приложения -->
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
