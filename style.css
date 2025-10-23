@@ -1,23 +1,12 @@
 body {
-    background: url('/assets/images/back/windows.jpg') no-repeat center center / cover fixed;
+    background: url('assets/images/back/windows.jpg') no-repeat center center / cover fixed;
     margin: 0;
     height: 100vh;
     font-family: 'VT323', monospace;
-    margin: 0;
     overflow: hidden;
     cursor: url('assets/images/cursor.cur'), auto;
 }
-.icon {
-    width: 80px;
-    text-align: center;
-    cursor: pointer;
-    margin: 10px;
-    display: inline-block;
-}
-.icon img {
-    width: 64px;
-    height: 64px;
-}
+
 .window {
     position: absolute;
     width: 500px;
@@ -39,4 +28,30 @@ body {
     height: calc(100% - 28px);
     background: #fff;
     margin: 4px;
+}
+
+#desktop {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.icon {
+  position: absolute;
+  width: 80px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.3s ease;
+}
+
+.icon img {
+    width: 64px;
+    height: 64px;
+}
+
+.icon:hover {
+  transform: scale(1.15);
 }

@@ -1,4 +1,3 @@
-// Получаем элементы
 const desktop = document.getElementById('desktop');
 const appWindow = document.getElementById('app-window');
 const windowTitle = document.getElementById('window-title');
@@ -7,13 +6,23 @@ const closeBtn = document.getElementById('close-window');
 
 let zIndex = 1;
 
-// DRAG & DROP для окна
 let isDragging = false;
 let offsetX, offsetY;
 const header = appWindow.querySelector('.window-header');
 
 header.addEventListener('mousedown', (e) => {
+  if (e.target === closeBtn) {
+    return;
+  }
   isDragging = true;
+  
+  if (appWindow.style.transform && appWindow.style.transform !== 'none') {
+    const rect = appWindow.getBoundingClientRect();
+    appWindow.style.left = rect.left + 'px';
+    appWindow.style.top = rect.top + 'px';
+    appWindow.style.transform = 'none';
+  }
+  
   offsetX = e.clientX - appWindow.offsetLeft;
   offsetY = e.clientY - appWindow.offsetTop;
   appWindow.style.zIndex = ++zIndex;
@@ -30,33 +39,36 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
-// Закрытие окна
-closeBtn.addEventListener('click', () => {
+closeBtn.addEventListener('click', (e) => {
+  e.stopPropagation();
   appWindow.style.display = 'none';
+  appWindow.style.transform = '';
   windowContent.innerHTML = '';
 });
 
-// Открытие конкретного приложения
 desktop.querySelectorAll('.icon').forEach(icon => {
   icon.addEventListener('dblclick', () => {
-    const appName = icon.dataset.app; // имя приложения из data-app
+    const appName = icon.dataset.app; 
     openApp(appName);
   });
 });
 
-// Функция открытия окна с приложением
 function openApp(appName) {
   windowTitle.textContent = appName;
   appWindow.style.display = 'block';
   appWindow.style.zIndex = ++zIndex;
+  
+  appWindow.style.left = '50%';
+  appWindow.style.top = '50%';
+  appWindow.style.transform = 'translate(-50%, -50%)';
 
-  // Загружаем конкретное приложение в iframe
   windowContent.innerHTML = `
     <iframe 
       src="apps/${appName}/index.html" 
       frameborder="0" 
       width="100%" 
-      height="100%">
+      height="100%"
+      style="border: none;">
     </iframe>
   `;
 }
