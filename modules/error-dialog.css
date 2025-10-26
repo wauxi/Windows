@@ -1,0 +1,127 @@
+.error-dialog {
+  position: fixed;
+  background: #c0c0c0;
+  border: 2px outset #ffffff;
+  box-shadow: 1px 1px 0 #808080, inset -1px -1px 0 #dfdfdf;
+  padding: 0;
+  min-width: 340px;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+  z-index: 9999;
+  cursor: move;
+}
+
+.error-dialog.dragging {
+  cursor: grabbing;
+}
+
+.error-dialog-header {
+  background: linear-gradient(to right, #000080, #1084d7);
+  color: white;
+  padding: 2px 2px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 18px;
+  font-size: 11px;
+  font-weight: bold;
+  user-select: none;
+}
+
+.error-dialog-title {
+  flex: 1;
+  padding: 0 4px;
+}
+
+.error-dialog-close {
+  width: 16px;
+  height: 14px;
+  padding: 0;
+  margin: 1px;
+  background: #c0c0c0;
+  border: 2px outset #ffffff;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-size: 10px;
+  line-height: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-weight: bold;
+}
+
+.error-dialog-close:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.error-dialog-content {
+  background: #c0c0c0;
+  padding: 8px;
+  display: flex;
+  gap: 12px;
+  border-bottom: 1px solid #dfdfdf;
+}
+
+.error-dialog-icon {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-dialog-icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.error-dialog-message {
+  flex: 1;
+  padding-top: 2px;
+}
+
+.error-dialog-title-text {
+  font-weight: bold;
+  margin-bottom: 4px;
+  color: #000;
+}
+
+.error-dialog-text {
+  color: #000;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.error-dialog-buttons {
+  background: #c0c0c0;
+  padding: 8px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.error-dialog-btn {
+  width: 75px;
+  height: 23px;
+  background: #c0c0c0;
+  border: 2px outset #ffffff;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  font-family: 'MS Sans Serif', Arial, sans-serif;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  color: #000;
+}
+
+.error-dialog-btn:active {
+  border-color: #808080 #ffffff #ffffff #808080;
+}
+
+.error-dialog-btn:focus {
+  outline: 1px dotted #000;
+  outline-offset: -4px;
+}

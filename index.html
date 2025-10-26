@@ -5,35 +5,54 @@
   <title>Digital Desktop of Memories</title>
   <link rel="stylesheet" href="https://unpkg.com/xp.css@0.2.6/dist/XP.css">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/webamp@1.4.2/built/webamp.bundle.min.js"></script>
 </head>
 <body>
 
   <div id="desktop">
     <div class="icon" data-app="cards">
       <img src="assets/images/icons/cards.png" alt="Cards">
-      <div>cards.exe</div>
+      <div>Maps</div>
     </div>
     <div class="icon" data-app="photobooth">
       <img src="assets/images/icons/gallery.png" alt="Photobooth">
-      <div>photobooth.exe</div>
+      <div>Photos</div>
     </div>
-    <div class="icon" data-app="dreams">
+    <div class="icon" data-stub="placeholder">
       <img src="assets/images/icons/notes.png" alt="Dreams">
-      <div>dreams.txt</div>
-    </div>
-    <div class="icon" data-app="bubble_chat">
-      <img src="assets/images/icons/chat.png" alt="Bubble Chat">
-      <div>bubble_chat.exe</div>
+      <div>Notepad</div>
     </div>
     <div class="icon" data-app="memories_player">
       <img src="assets/images/icons/player.png" alt="Memories Player">
-      <div>memories_player.exe</div>
+      <div>Media Player</div>
     </div>
-    <div class="icon" data-app="weather_of_the_day">
-      <img src="assets/images/icons/weather.png" alt="Weather">
-      <div>weather_of_the_day.exe</div>
+    <div class="icon" data-app="minesweeper">
+      <img src="apps/minesweeper/favicon.ico" alt="Minesweeper">
+      <div>Minesweeper</div>
+    </div>
+    <div class="icon" data-app="winamp">
+      <img src="assets/images/icons/winamp.png" alt="Winamp">
+      <div>Winamp</div>
+    </div>
+    <div class="icon" data-stub="placeholder">
+      <img src="assets/images/icons/steam.png" alt="Steam">
+      <div>Steam</div>
+    </div>
+    <div class="icon" data-stub="placeholder">
+      <img src="assets/images/icons/spotify.png" alt="Spotify">
+      <div>Spotify</div>
+    </div>
+    <div class="icon" data-stub="placeholder">
+      <img src="assets/images/icons/explorer.png" alt="Explorer">
+      <div>File Explorer</div>
+    </div>
+    <div class="icon" data-stub="placeholder">
+      <img src="assets/images/icons/chrome.png" alt="Chrome">
+      <div>Chrome</div>
     </div>
   </div>
+
+  <div id="webamp-container"></div>
 
   <div id="app-window" class="window">
     <div class="window-header">
@@ -43,7 +62,6 @@
     <div class="window-body" id="window-content">
     </div>
   </div>
-  <script src="randomizer.js"></script>
-  <script src="script.js" defer></script>
+  <script type="module" src="modules/app.js" defer></script>
 </body>
 </html>

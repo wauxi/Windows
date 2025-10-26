@@ -1,0 +1,15 @@
+[
+  { "url": "assets/audio/playlist/100.mp3", "meta": { "artist": "Dean Blunt", "title": "100" } },
+  { "url": "assets/audio/playlist/I Love You.mp3", "meta": { "artist": "Fontaines D.C.", "title": "I Love You" } },
+  { "url": "assets/audio/playlist/Lady Brown (feat. Cise Starr from CYNE).mp3", "meta": { "artist": "Nujabes, Cise Starr", "title": "Lady Brown (feat. Cise Starr from CYNE)" } },
+  { "url": "assets/audio/playlist/Luv (sic).mp3", "meta": { "artist": "Nujabes", "title": "Luv (sic)" } },
+  { "url": "assets/audio/playlist/Rivet Gun.mp3", "meta": { "artist": "Mother Soki", "title": "Rivet Gun" } },
+  { "url": "assets/audio/playlist/Romance.mp3", "meta": { "artist": "Fontaines D.C.", "title": "Romance" } },
+  { "url": "assets/audio/playlist/The Narcissist.mp3", "meta": { "artist": "Dean Blunt, Inga Copeland", "title": "The Narcissist" } },
+  { "url": "assets/audio/playlist/flutter.mp3", "meta": { "artist": "julie", "title": "flutter" } },
+  { "url": "assets/audio/playlist/yurikago kara hakaba made.mp3", "meta": { "artist": "my dead girlfriend", "title": "yurikago kara hakaba made" } },
+  { "url": "assets/audio/playlist/まほうのじゅうたん.mp3", "meta": { "artist": "百景", "title": "まほうのじゅうたん" } },
+  { "url": "assets/audio/playlist/Наташа.mp3", "meta": { "artist": "Sobakka", "title": "Наташа" } },
+  { "url": "assets/audio/playlist/Миф.mp3", "meta": { "artist": "Sobakka", "title": "Миф" } },
+  { "url": "assets/audio/playlist/Гармошка.mp3", "meta": { "artist": "Время и Стекло", "title": "Гармошка" } }
+]
