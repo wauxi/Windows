@@ -173,12 +173,12 @@ class AppLauncher {
       iframe.style.overflowY = 'hidden';
       iframe.setAttribute('scrolling', 'no');
 
-      // Prefer measuring the full main container to include elements that
-      // visually extend outside the inner `.crt-container` (like .crt-table).
-      const tvContainer = doc.querySelector('#crtMain') ||
-                         doc.querySelector(DOM_SELECTORS.TV_CONTAINER) ||
-                         doc.querySelector('main') ||
-                         doc.body;
+  // Prefer measuring the inner `.crt-container` first (matches preloader).
+  // Fall back to #crtMain or main/body if the container isn't present.
+  const tvContainer = doc.querySelector(DOM_SELECTORS.TV_CONTAINER) ||
+         doc.querySelector('#crtMain') ||
+         doc.querySelector('main') ||
+         doc.body;
 
       const rect = tvContainer.getBoundingClientRect();
       // Use scrollHeight/scrollWidth where possible — this captures overflowing
