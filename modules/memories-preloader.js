@@ -1,4 +1,6 @@
 import { TIMING, TV_CONFIG, DOM_SELECTORS, APP_NAMES } from './constants.js';
+import { getIframeDocument, disableScrollOnDocument } from './dom-utils.js';
+import { setTVComputedSizes } from './element-meta.js';
 
 class MemoriesPlayerPreloader {
   constructor() {
@@ -10,11 +12,15 @@ class MemoriesPlayerPreloader {
     this.memoriesPlayerIframe = document.createElement('iframe');
     this.memoriesPlayerIframe.src = `apps/${APP_NAMES.MEMORIES_PLAYER}/index.html`;
     this.memoriesPlayerIframe.setAttribute('frameborder', '0');
+    this.memoriesPlayerIframe.setAttribute('scrolling', 'no'); 
     this.memoriesPlayerIframe.style.border = 'none';
     this.memoriesPlayerIframe.style.display = 'block';
     this.memoriesPlayerIframe.style.position = 'absolute';
     this.memoriesPlayerIframe.style.visibility = 'hidden';
     this.memoriesPlayerIframe.style.pointerEvents = 'none';
+    this.memoriesPlayerIframe.style.overflow = 'hidden'; 
+    this.memoriesPlayerIframe.style.overflowX = 'hidden';
+    this.memoriesPlayerIframe.style.overflowY = 'hidden';
 
     this.memoriesPlayerIframe.addEventListener('load', () => this.onIframeLoad());
 
@@ -23,21 +29,9 @@ class MemoriesPlayerPreloader {
 
   onIframeLoad() {
     try {
-      const doc = this.memoriesPlayerIframe.contentDocument || this.memoriesPlayerIframe.contentWindow.document;
-      
-      try {
-        doc.documentElement.style.overflow = 'hidden';
-        doc.documentElement.style.overflowX = 'hidden';
-        doc.documentElement.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('memories-preloader: ignored error disabling document scroll');
-      }
-      try {
-        doc.body.style.overflow = 'hidden';
-        doc.body.style.overflowX = 'hidden';
-        doc.body.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('memories-preloader: ignored error disabling body scroll');
+      const doc = getIframeDocument(this.memoriesPlayerIframe);
+      if (doc) {
+        disableScrollOnDocument(doc);
       }
 
       setTimeout(() => this.measureTVSize(), TIMING.TV_PRELOAD_MEASUREMENT_DELAY);
@@ -49,7 +43,13 @@ class MemoriesPlayerPreloader {
 
   measureTVSize() {
     try {
-      const doc = this.memoriesPlayerIframe.contentDocument || this.memoriesPlayerIframe.contentWindow.document;
+      const doc = getIframeDocument(this.memoriesPlayerIframe);
+      if (!doc) {
+        console.warn('memories-preloader: iframe document not accessible (cross-origin or not loaded)');
+        this.isReady = true;
+        return;
+      }
+
       const tvContainer = doc.querySelector(DOM_SELECTORS.TV_CONTAINER) || 
                          doc.querySelector('main') || 
                          doc.body;
@@ -75,11 +75,13 @@ class MemoriesPlayerPreloader {
 
       const scale = Math.min(1, maxW / contentW, maxH / contentH);
 
-      this.memoriesPlayerIframe._computedWidth = Math.round(contentW * scale);
-      this.memoriesPlayerIframe._computedHeight = Math.round(contentH * scale);
-      this.memoriesPlayerIframe._computedScale = scale;
-      this.memoriesPlayerIframe._contentW = contentW;
-      this.memoriesPlayerIframe._contentH = contentH;
+      setTVComputedSizes(this.memoriesPlayerIframe, {
+        computedWidth: Math.round(contentW * scale),
+        computedHeight: Math.round(contentH * scale),
+        computedScale: scale,
+        contentW,
+        contentH
+      });
 
       this.isReady = true;
     } catch (err) {

@@ -1,6 +1,7 @@
 import { windowState } from './window-state.js';
 import { DOM_SELECTORS } from './constants.js';
 import { webampManager } from './webamp-manager.js';
+import { getIframeDocument, disableScrollOnDocument, enableScrollOnDocument } from './dom-utils.js';
 
 class WindowCloser {
   constructor() {
@@ -27,15 +28,8 @@ class WindowCloser {
     
     if (iframe) {
       try {
-        const doc = iframe.contentDocument;
-        if (doc) {
-          doc.documentElement.style.overflow = 'hidden';
-          doc.documentElement.style.overflowX = 'hidden';
-          doc.documentElement.style.overflowY = 'hidden';
-          doc.body.style.overflow = 'hidden';
-          doc.body.style.overflowX = 'hidden';
-          doc.body.style.overflowY = 'hidden';
-        }
+        const doc = getIframeDocument(iframe);
+        if (doc) disableScrollOnDocument(doc);
       } catch {
         if (window.__DEV__) console.debug('window-closer: ignored cross-origin error while disabling iframe scroll');
       }
@@ -43,9 +37,7 @@ class WindowCloser {
     
     windowState.reset();
     
-    document.documentElement.style.overflow = '';
-    document.documentElement.style.overflowX = '';
-    document.documentElement.style.overflowY = '';
+    enableScrollOnDocument(document);
   }
 }
 

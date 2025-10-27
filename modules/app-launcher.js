@@ -4,6 +4,9 @@ import { memoriesPlayerPreloader } from './memories-preloader.js';
 import { iframeCreator } from './iframe-creator.js';
 import { webampManager } from './webamp-manager.js';
 import { errorDialog } from './error-dialog.js';
+import { getIframeDocument, disableScrollOnDocument, safeObserveResizeInIframe, centerWindowState } from './dom-utils.js';
+import { UI_DIMENSIONS } from './constants.js';
+import { getTVComputedSizes, setIframeObserver } from './element-meta.js';
 
 class AppLauncher {
   openApp(appName) {
@@ -55,6 +58,12 @@ class AppLauncher {
     iframe.style.position = 'static';
     iframe.style.visibility = 'visible';
     iframe.style.pointerEvents = 'auto';
+    iframe.style.border = 'none';
+    iframe.style.outline = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.overflowX = 'hidden';
+    iframe.style.overflowY = 'hidden';
+    iframe.setAttribute('scrolling', 'no');
     iframe.width = '100%';
     iframe.height = '100%';
     iframe.style.width = '100%';
@@ -62,18 +71,21 @@ class AppLauncher {
 
     windowState.appendContent(iframe);
 
-    if (iframe._computedWidth && iframe._computedHeight) {
+    // Read computed sizes from WeakMap (element-meta) instead of iframe properties
+    const sizes = getTVComputedSizes(iframe);
+    if (sizes && sizes.computedWidth && sizes.computedHeight) {
       windowState.addClass(CSS_CLASSES.TV_MODAL);
       windowState.setSize(
-        iframe._computedWidth + 'px',
-        iframe._computedHeight + 'px'
+        sizes.computedWidth + 'px',
+        sizes.computedHeight + 'px'
       );
-      iframe.style.width = iframe._contentW + 'px';
-      iframe.style.height = iframe._contentH + 'px';
-      iframe.style.transform = `scale(${iframe._computedScale})`;
+      // Use direct sizing instead of scale transform to avoid cutting off content
+      iframe.style.width = sizes.computedWidth + 'px';
+      iframe.style.height = sizes.computedHeight + 'px';
+      iframe.style.transform = 'none';
+      iframe.style.transformOrigin = 'top left';
 
-      windowState.setPosition('50%', '50%');
-      windowState.setTransform('translate(-50%, -50%)');
+      centerWindowState(windowState);
 
       windowState.hideDocumentOverflow();
       windowState.setVisibility('visible');
@@ -126,23 +138,10 @@ class AppLauncher {
   setupMemoriesPlayerAsync(iframe) {
     iframe.addEventListener('load', () => {
       try {
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        try {
-          doc.documentElement.style.overflow = 'hidden';
-          doc.documentElement.style.overflowX = 'hidden';
-          doc.documentElement.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('app-launcher: ignored iframe doc overflow change');
-      }
-        try {
-          doc.body.style.overflow = 'hidden';
-          doc.body.style.overflowX = 'hidden';
-          doc.body.style.overflowY = 'hidden';
-        } catch {
-          if (window.__DEV__) console.debug('app-launcher: ignored iframe body overflow change');
+        const doc = getIframeDocument(iframe);
+        if (doc) {
+          disableScrollOnDocument(doc);
         }
-
         setTimeout(() => this.sizeMemoriesPlayer(iframe), TIMING.TV_PRELOAD_MEASUREMENT_DELAY);
       } catch (err) {
         console.warn('Could not auto-fit memories_player iframe:', err);
@@ -156,28 +155,34 @@ class AppLauncher {
 
   sizeMemoriesPlayer(iframe) {
     try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
-      
-      try {
-        doc.documentElement.style.overflow = 'hidden';
-        doc.documentElement.style.overflowX = 'hidden';
-        doc.documentElement.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('app-launcher: ignored error while measuring TV container');
-      }
-      try {
-        doc.body.style.overflow = 'hidden';
-        doc.body.style.overflowX = 'hidden';
-        doc.body.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('app-launcher: ignored error while sizing TV modal');
+      const doc = getIframeDocument(iframe);
+      if (!doc) {
+        console.warn('app-launcher: memories_player iframe document not accessible');
+        windowState.clearUnhideTimer();
+        windowState.setVisibility('visible');
+        return;
       }
 
-      const tvContainer = doc.querySelector(DOM_SELECTORS.TV_CONTAINER) || 
-                         doc.querySelector('main') || 
+      disableScrollOnDocument(doc);
+
+      // Ensure no border on iframe and force no overflow
+      iframe.style.border = 'none';
+      iframe.style.outline = 'none';
+      iframe.style.overflow = 'hidden';
+      iframe.style.overflowX = 'hidden';
+      iframe.style.overflowY = 'hidden';
+      iframe.setAttribute('scrolling', 'no');
+
+      // Prefer measuring the full main container to include elements that
+      // visually extend outside the inner `.crt-container` (like .crt-table).
+      const tvContainer = doc.querySelector('#crtMain') ||
+                         doc.querySelector(DOM_SELECTORS.TV_CONTAINER) ||
+                         doc.querySelector('main') ||
                          doc.body;
 
       const rect = tvContainer.getBoundingClientRect();
+      // Use scrollHeight/scrollWidth where possible — this captures overflowing
+      // children and negative margins that bounding rect might miss.
       const tvWidth = Math.max(
         Math.ceil(rect.width),
         tvContainer.scrollWidth || 0,
@@ -185,8 +190,7 @@ class AppLauncher {
       ) || TV_CONFIG.DEFAULT_WIDTH;
 
       const tvHeight = Math.max(
-        Math.ceil(rect.height),
-        tvContainer.scrollHeight || 0,
+        tvContainer.scrollHeight || Math.ceil(rect.height) || 0,
         tvContainer.offsetHeight || 0
       ) || TV_CONFIG.DEFAULT_HEIGHT;
 
@@ -198,16 +202,18 @@ class AppLauncher {
 
       const scale = Math.min(1, maxW / contentW, maxH / contentH);
 
+      // Instead of using scale transform (which can cut off content),
+      // directly set the iframe width/height to scaled values
       const finalW = Math.round(contentW * scale);
       const finalH = Math.round(contentH * scale);
 
       windowState.setSize(finalW + 'px', finalH + 'px');
-      iframe.style.width = contentW + 'px';
-      iframe.style.height = contentH + 'px';
-      iframe.style.transform = `scale(${scale})`;
+      iframe.style.width = finalW + 'px';
+      iframe.style.height = finalH + 'px';
+      iframe.style.transform = 'none';  // Remove scale transform
+      iframe.style.transformOrigin = 'top left';
 
-      windowState.setPosition('50%', '50%');
-      windowState.setTransform('translate(-50%, -50%)');
+      centerWindowState(windowState);
 
       windowState.hideDocumentOverflow();
 
@@ -215,41 +221,25 @@ class AppLauncher {
       windowState.setVisibility('visible');
     } catch (err) {
       console.warn('Error sizing TV modal:', err);
+      windowState.clearUnhideTimer();
+      windowState.setVisibility('visible');
     }
   }
 
   setupMinesweeperAsync(iframe) {
     const onLoad = () => {
       try {
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-
-        try {
-          doc.documentElement.style.overflow = 'hidden';
-          doc.documentElement.style.overflowX = 'hidden';
-          doc.documentElement.style.overflowY = 'hidden';
-        } catch {
-          if (window.__DEV__) console.debug('app-launcher: unable to disable document scroll for minesweeper');
-        }
-        try {
-          doc.body.style.overflow = 'hidden';
-          doc.body.style.overflowX = 'hidden';
-          doc.body.style.overflowY = 'hidden';
-        } catch {
-          if (window.__DEV__) console.debug('app-launcher: unable to disable body scroll for minesweeper');
+        const doc = getIframeDocument(iframe);
+        if (doc) {
+          disableScrollOnDocument(doc);
         }
 
         setTimeout(() => this.sizeMinesweeper(iframe), TIMING.MINESWEEPER_MEASUREMENT_DELAY);
 
-        const container = doc.querySelector(DOM_SELECTORS.MINESWEEPER_CONTAINER) || doc.body;
-        if (iframe.contentWindow && iframe.contentWindow.ResizeObserver && container) {
-          try {
-            const ObserverCtor = iframe.contentWindow.ResizeObserver;
-            const observer = new ObserverCtor(() => this.sizeMinesweeper(iframe));
-            observer.observe(container);
-            iframe._minesweeperObserver = observer;
-          } catch (observerErr) {
-            if (window.__DEV__) console.debug('app-launcher: minesweeper resize observer failed', observerErr);
-          }
+        // Store observer in WeakMap instead of iframe property
+        const observer = safeObserveResizeInIframe(iframe, DOM_SELECTORS.MINESWEEPER_CONTAINER, () => this.sizeMinesweeper(iframe));
+        if (observer) {
+          setIframeObserver(iframe, observer);
         }
       } catch (err) {
         console.warn('Could not auto-fit minesweeper iframe:', err);
@@ -263,22 +253,15 @@ class AppLauncher {
 
   sizeMinesweeper(iframe) {
     try {
-      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      const doc = getIframeDocument(iframe);
+      if (!doc) {
+        console.warn('app-launcher: minesweeper iframe document not accessible');
+        windowState.clearUnhideTimer();
+        windowState.setVisibility('visible');
+        return;
+      }
 
-      try {
-        doc.documentElement.style.overflow = 'hidden';
-        doc.documentElement.style.overflowX = 'hidden';
-        doc.documentElement.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('app-launcher: minesweeper document overflow lock failed');
-      }
-      try {
-        doc.body.style.overflow = 'hidden';
-        doc.body.style.overflowX = 'hidden';
-        doc.body.style.overflowY = 'hidden';
-      } catch {
-        if (window.__DEV__) console.debug('app-launcher: minesweeper body overflow lock failed');
-      }
+      disableScrollOnDocument(doc);
 
       const container = doc.querySelector(DOM_SELECTORS.MINESWEEPER_CONTAINER) || doc.body;
       
@@ -289,8 +272,8 @@ class AppLauncher {
       let containerWidth = Math.ceil(rect.width) || MINESWEEPER_CONFIG.DEFAULT_WIDTH;
       let containerHeight = Math.ceil(rect.height) || MINESWEEPER_CONFIG.DEFAULT_HEIGHT;
 
-      const windowW = containerWidth + 8; 
-      const windowH = containerHeight + 28 + 8; 
+      const windowW = containerWidth + UI_DIMENSIONS.WINDOW_PADDING; 
+      const windowH = containerHeight + UI_DIMENSIONS.WINDOW_HEADER_HEIGHT + UI_DIMENSIONS.WINDOW_PADDING; 
 
       const maxW = Math.floor(window.innerWidth * MINESWEEPER_CONFIG.MAX_WIDTH_RATIO);
       const maxH = Math.floor(window.innerHeight * MINESWEEPER_CONFIG.MAX_HEIGHT_RATIO);
@@ -305,8 +288,7 @@ class AppLauncher {
       iframe.style.transform = '';
       iframe.style.transformOrigin = '';
 
-      windowState.setPosition('50%', '50%');
-      windowState.setTransform('translate(-50%, -50%)');
+      centerWindowState(windowState);
 
       windowState.hideDocumentOverflow();
       windowState.clearUnhideTimer();
@@ -320,10 +302,9 @@ class AppLauncher {
   setupPhotoboothHandling(iframe) {
     iframe.addEventListener('load', () => {
       try {
-        const doc = iframe.contentDocument;
-        if (doc && doc.body) {
-          doc.documentElement.style.overflow = 'hidden';
-          doc.body.style.overflow = 'hidden';
+        const doc = getIframeDocument(iframe);
+        if (doc) {
+          disableScrollOnDocument(doc);
         }
       } catch {}
     });

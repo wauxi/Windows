@@ -1,4 +1,6 @@
 import { TIMING, DOM_SELECTORS, CSS_CLASSES } from './constants.js';
+import { disableScrollOnDocument, enableScrollOnDocument } from './dom-utils.js';
+import { clearIframeObserver } from './element-meta.js';
 
 class WindowState {
   constructor() {
@@ -89,12 +91,8 @@ class WindowState {
   clearContent() {
     while (this.windowContent.firstChild) {
       const child = this.windowContent.firstChild;
-      if (child && child._minesweeperObserver) {
-        try {
-          child._minesweeperObserver.disconnect();
-        } catch {
-        }
-        child._minesweeperObserver = null;
+      if (child && child.tagName && child.tagName.toLowerCase() === 'iframe') {
+        clearIframeObserver(child);
       }
       this.windowContent.removeChild(child);
     }
@@ -112,14 +110,29 @@ class WindowState {
 
   restoreDocumentOverflow() {
     if (this.prevDocumentOverflow !== null) {
-      document.documentElement.style.overflow = this.prevDocumentOverflow;
+      try {
+        document.documentElement.style.overflow = this.prevDocumentOverflow;
+      } catch (e) {}
       this.prevDocumentOverflow = null;
+      // ensure body scroll styles are cleared
+      try {
+        document.body.style.overflow = '';
+        document.body.style.overflowX = '';
+        document.body.style.overflowY = '';
+      } catch (e) {}
+      return;
     }
+
+    try {
+      enableScrollOnDocument(document);
+    } catch (e) {}
   }
 
   hideDocumentOverflow() {
     this.saveDocumentOverflow();
-    document.documentElement.style.overflow = 'hidden';
+    try {
+      disableScrollOnDocument(document);
+    } catch (e) {}
   }
 
   setUnhideTimer(callback, delay = TIMING.TV_UNHIDE_FALLBACK_TIMEOUT) {

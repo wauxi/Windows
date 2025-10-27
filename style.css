@@ -30,6 +30,7 @@ body {
   display: none;
   z-index: 1;
   overflow: hidden;
+  box-sizing: border-box;
 }
 .window-header {
   background: #000080;
@@ -40,6 +41,8 @@ body {
   height: calc(100% - 28px);
   background: #fff;
   margin: 4px;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 #desktop {
@@ -61,7 +64,6 @@ body {
   cursor: pointer;
   user-select: none;
   opacity: 0;
-  transition: opacity 0.8s ease, transform 0.3s ease;
   will-change: left, top;
 }
 
@@ -85,24 +87,26 @@ body {
 }
 
 .window.tv-modal {
-  position: fixed; 
+  position: fixed !important; 
   width: min(980px, 92vw);
   height: min(640px, 84vh);
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  display: block;
-  overflow: hidden; 
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: block !important;
+  overflow: hidden !important; 
   max-width: 100%;
   max-height: 100%;
   box-sizing: border-box;
 }
 
 .window.tv-modal .window-body {
-  background: transparent;
-  margin: 0;
-  height: 100%;
-  padding: 0;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  border: none !important;
 }
 
 .window.tv-modal .window-header {
@@ -135,9 +139,10 @@ body {
 .window.tv-modal .window-body iframe {
   width: 100%;
   height: 100%;
-  border: none;
+  border: none !important;
   display: block;
-  transform-origin: top left; 
+  transform-origin: top left;
+  outline: none !important;
 }
 
 .window.tv-modal .window-header {

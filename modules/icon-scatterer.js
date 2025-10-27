@@ -1,12 +1,12 @@
-import { DOM_SELECTORS } from './constants.js';
+import { DOM_SELECTORS, ICON_LAYOUT, TIMING } from './constants.js';
 
 class IconScatterer {
   constructor() {
-    this.desktop = document.querySelector(DOM_SELECTORS.DESKTOP);
-    this.iconSize = 90;
-    this.margin = 60;
-    this.spacing = 140;
-    this.maxTries = 200;
+  this.desktop = document.querySelector(DOM_SELECTORS.DESKTOP);
+  this.iconSize = ICON_LAYOUT.ICON_SIZE;
+  this.margin = ICON_LAYOUT.ICON_MARGIN;
+  this.spacing = ICON_LAYOUT.ICON_SPACING;
+  this.maxTries = ICON_LAYOUT.ICON_MAX_TRIES;
   }
 
   scatter() {
@@ -63,10 +63,10 @@ class IconScatterer {
   animateIconAppear(icon, index) {
     icon.style.opacity = 0;
     
-    const delay = Math.random() * 800;
-    
+    const delay = Math.random() * TIMING.ICON_FADE_MAX_DELAY;
+
     setTimeout(() => {
-      icon.style.transition = 'opacity 0.8s ease';
+      icon.style.transition = `opacity ${TIMING.ICON_FADE_DURATION}ms ease`;
       icon.style.opacity = 1;
     }, delay);
   }
@@ -75,7 +75,7 @@ class IconScatterer {
     clearTimeout(this.resizeTimer);
     this.resizeTimer = setTimeout(() => {
       this.scatter();
-    }, 250);
+    }, ICON_LAYOUT.ICON_RESIZE_DEBOUNCE);
   }
 }
 

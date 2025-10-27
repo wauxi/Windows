@@ -22,27 +22,33 @@ class DesktopIconManager {
 
   setupIconClickHandlers() {
     if (!this.desktop) return;
-
-    const icons = this.desktop.querySelectorAll(DOM_SELECTORS.ICON);
-    if (!icons || icons.length === 0) return;
-
-    icons.forEach(icon => {
-      icon.addEventListener('click', (e) => {
-        e.preventDefault();
-      });
-      
-      icon.addEventListener('dblclick', (e) => this.onIconDoubleClick(e));
-      
-      const img = icon.querySelector('img');
-      const text = icon.querySelector('div');
-      
-      if (img) {
-        img.addEventListener('click', (e) => e.preventDefault());
-        img.addEventListener('dblclick', (e) => e.preventDefault());
+    this.desktop.addEventListener('click', (e) => {
+      try {
+        const icon = e.target.closest(DOM_SELECTORS.ICON);
+        if (icon && this.desktop.contains(icon)) {
+          e.preventDefault();
+        }
+      } catch (err) {
+        if (window.__DEV__) console.debug('desktop-icon-manager: click delegation error', err);
       }
-      if (text) {
-        text.addEventListener('click', (e) => e.preventDefault());
-        text.addEventListener('dblclick', (e) => e.preventDefault());
+    });
+
+    this.desktop.addEventListener('dblclick', (e) => {
+      try {
+        const icon = e.target.closest(DOM_SELECTORS.ICON);
+        if (!icon || !this.desktop.contains(icon)) return;
+
+        const syntheticEvent = {
+          currentTarget: icon,
+          clientX: e.clientX,
+          clientY: e.clientY,
+          preventDefault: () => e.preventDefault(),
+          stopPropagation: () => e.stopPropagation()
+        };
+
+        this.onIconDoubleClick(syntheticEvent);
+      } catch (err) {
+        if (window.__DEV__) console.debug('desktop-icon-manager: dblclick delegation error', err);
       }
     });
   }

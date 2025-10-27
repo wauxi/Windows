@@ -24,11 +24,18 @@ class IframeCreator {
   }
 
   createMemoriesPlayerIframe() {
-    return this.createBaseIframe(
+    const iframe = this.createBaseIframe(
       `apps/${APP_NAMES.MEMORIES_PLAYER}/index.html`,
       SCROLLING.PHOTOBOOTH_SCROLLING,
       true
     );
+    iframe.style.border = 'none';
+    iframe.style.outline = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.style.overflowX = 'hidden';
+    iframe.style.overflowY = 'hidden';
+    iframe.setAttribute('scrolling', 'no');
+    return iframe;
   }
 
   createPhotoboothIframe() {

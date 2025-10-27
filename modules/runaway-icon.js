@@ -1,9 +1,11 @@
+import { RUNAWAY_CONFIG } from './constants.js';
+
 class RunawayIcon {
   constructor() {
     this.runawayIcons = new Set();
-    this.escapeDistance = 150; 
-    this.moveDistance = 200; 
-    this.animationDuration = 300; 
+    this.escapeDistance = RUNAWAY_CONFIG.ESCAPE_DISTANCE;
+    this.moveDistance = RUNAWAY_CONFIG.MOVE_DISTANCE;
+    this.animationDuration = RUNAWAY_CONFIG.ANIMATION_DURATION;
   }
 
   init() {
@@ -55,11 +57,11 @@ class RunawayIcon {
     let newLeft = currentLeft + normalizedX;
     let newTop = currentTop + normalizedY;
     
-    const maxLeft = window.innerWidth - rect.width - 20;
-    const maxTop = window.innerHeight - rect.height - 20;
-    
-    newLeft = Math.max(20, Math.min(newLeft, maxLeft));
-    newTop = Math.max(20, Math.min(newTop, maxTop));
+  const maxLeft = window.innerWidth - rect.width - RUNAWAY_CONFIG.BOUNDS_PADDING;
+  const maxTop = window.innerHeight - rect.height - RUNAWAY_CONFIG.BOUNDS_PADDING;
+
+  newLeft = Math.max(RUNAWAY_CONFIG.BOUNDS_PADDING, Math.min(newLeft, maxLeft));
+  newTop = Math.max(RUNAWAY_CONFIG.BOUNDS_PADDING, Math.min(newTop, maxTop));
     
     icon.style.transition = `left ${this.animationDuration}ms ease-out, top ${this.animationDuration}ms ease-out`;
     icon.style.left = newLeft + 'px';
@@ -73,20 +75,20 @@ class RunawayIcon {
   }
 
   teleportToRandomPosition(icon) {
-    const maxLeft = window.innerWidth - 100;
-    const maxTop = window.innerHeight - 100;
-    
-    const randomLeft = Math.random() * maxLeft + 20;
-    const randomTop = Math.random() * maxTop + 20;
-    
-    icon.style.transition = 'opacity 200ms';
+    const maxLeft = window.innerWidth - RUNAWAY_CONFIG.TELEPORT_MARGIN;
+    const maxTop = window.innerHeight - RUNAWAY_CONFIG.TELEPORT_MARGIN;
+
+    const randomLeft = Math.random() * maxLeft + RUNAWAY_CONFIG.BOUNDS_PADDING;
+    const randomTop = Math.random() * maxTop + RUNAWAY_CONFIG.BOUNDS_PADDING;
+
+    icon.style.transition = `opacity ${RUNAWAY_CONFIG.TELEPORT_FADE_MS}ms`;
     icon.style.opacity = '0';
-    
+
     setTimeout(() => {
       icon.style.left = randomLeft + 'px';
       icon.style.top = randomTop + 'px';
       icon.style.opacity = '1';
-    }, 200);
+    }, RUNAWAY_CONFIG.TELEPORT_FADE_MS);
   }
 }
 

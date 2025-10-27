@@ -1,3 +1,5 @@
+import { UI_DIMENSIONS } from './constants.js';
+
 class ErrorDialog {
   constructor() {
     this.currentDialog = null;
@@ -53,8 +55,8 @@ class ErrorDialog {
 
     const dialog = document.createElement('div');
     dialog.className = 'error-dialog';
-    dialog.style.left = (x - 170) + 'px';
-    dialog.style.top = (y - 80) + 'px';
+  dialog.style.left = (x - UI_DIMENSIONS.ERROR_DIALOG_OFFSET_X) + 'px';
+  dialog.style.top = (y - UI_DIMENSIONS.ERROR_DIALOG_OFFSET_Y) + 'px';
 
     const header = document.createElement('div');
     header.className = 'error-dialog-header';
