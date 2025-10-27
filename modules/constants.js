@@ -10,7 +10,7 @@ export const TIMING = {
 export const TV_CONFIG = {
   DEFAULT_WIDTH: 980,                      // px - default TV width
   DEFAULT_HEIGHT: 640,                     // px - default TV height
-  PADDING_BUFFER: 200,                       // px - buffer around TV container
+  PADDING_BUFFER: 8,                       // px - buffer around TV container
   MAX_WIDTH_RATIO: 0.96,                   // % of viewport width
   MAX_HEIGHT_RATIO: 0.86                   // % of viewport height
 };
