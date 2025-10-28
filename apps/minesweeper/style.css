@@ -61,6 +61,7 @@ li {
 #window_menu {
     background-color: rgb(233, 230, 211);
     height: 20px;
+    position: relative;
 }
 
 #window_menu>button {
@@ -252,8 +253,8 @@ td {
     border: solid gray 1px;
     box-shadow: 2px 2px 1px darkslategray;
     position: absolute;
-    left: 0%;
-    top: 48.5px;
+    left: 0;
+    top: 20px;
     overflow: auto;
     z-index: 2;
 }
@@ -282,7 +283,7 @@ td {
 }
 
 .checkmark {
-    background-image: url('img/checked.png');
+    background-image: url('img/checked.png') !important;
     background-position-x: 3px;
     background-position-y: center;
     background-size: 7px;
@@ -292,6 +293,15 @@ td {
 .dropdown-content button:hover {
     background-color: rgb(46, 95, 224);
     color: white;
+}
+
+/* Keep checkmark visible on hover */
+.dropdown-content button.checkmark:hover {
+    background-image: url('img/checked.png');
+    background-position-x: 3px;
+    background-position-y: center;
+    background-size: 7px;
+    background-repeat: no-repeat;
 }
 
 #wifemode {

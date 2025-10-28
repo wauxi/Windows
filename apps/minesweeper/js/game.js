@@ -83,9 +83,26 @@ document.addEventListener('DOMContentLoaded', function() {
     // Difficulty buttons with data attributes
     const difficultyBtns = document.querySelectorAll('[data-difficulty]');
     difficultyBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const difficulty = this.getAttribute('data-difficulty');
-            switch(difficulty) {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const diffLevel = this.getAttribute('data-difficulty');
+            
+            // Remove checkmarks from all buttons
+            difficultyBtns.forEach(b => {
+                const text = b.textContent.replace('✓ ', '');
+                b.textContent = text;
+            });
+            
+            // Add checkmark to selected button
+            this.textContent = '✓ ' + this.textContent;
+            
+            // Close dropdown
+            const dropdown = document.getElementById("difficulty_dropdown");
+            if (dropdown) {
+                dropdown.classList.remove('show');
+            }
+            
+            switch(diffLevel) {
                 case 'easy':
                     setDifficulty(difficulty_presets.easy);
                     break;
@@ -378,3 +395,28 @@ function resetGame() {
 }
 
 startGame()
+
+// Setup event listeners
+document.getElementById('difficulty_button').addEventListener('click', enableDropdown);
+document.getElementById('reset_button').addEventListener('click', resetGame);
+document.getElementById('help_button').addEventListener('click', () => {
+    document.getElementById('get_help').classList.toggle('hidden');
+});
+document.getElementById('help_cross').addEventListener('click', () => {
+    document.getElementById('get_help').classList.add('hidden');
+});
+
+// Setup difficulty buttons
+const difficultyButtons = document.querySelectorAll('#difficulty_dropdown button');
+difficultyButtons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const diff = btn.dataset.difficulty;
+        if (diff === 'easy') setDifficulty(difficulty_presets.easy);
+        else if (diff === 'intermediate') setDifficulty(difficulty_presets.intermediate);
+        else if (diff === 'expert') setDifficulty(difficulty_presets.expert);
+        
+        // Close dropdown
+        document.getElementById('difficulty_dropdown').classList.remove('show');
+    });
+});

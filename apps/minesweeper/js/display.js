@@ -107,23 +107,23 @@ function displayTime() {
 function enableDropdown() {
     let dropdown = document.getElementById("difficulty_dropdown")
     dropdown.classList.toggle("show")
-    let buttons = dropdown.querySelectorAll("button")
-    for (const i in buttons) {
-        if (Object.hasOwnProperty.call(buttons, i)) {
-            const element = buttons[i]
-            if (element.innerHTML == "Intermediate" && window.innerWidth < 375 || element.innerHTML == "Expert" && window.innerWidth < 684) {
-                element.disabled = true
-            }
-            else {
-                element.disabled = false
-            }
-
-            if (element.innerHTML == difficulty.name) {
-                element.classList.add("checkmark")
+    
+    // Update checkmarks when opening
+    if (dropdown.classList.contains("show")) {
+        let buttons = dropdown.querySelectorAll("button")
+        console.log("[MINESWEEPER] Current difficulty:", difficulty.name);
+        buttons.forEach(btn => {
+            const diffName = btn.dataset.difficulty;
+            const currentDiff = difficulty.name.toLowerCase();
+            console.log(`[MINESWEEPER] Comparing: ${diffName} === ${currentDiff}`);
+            
+            if (diffName === currentDiff) {
+                console.log("[MINESWEEPER] Adding checkmark to:", btn.textContent);
+                btn.classList.add("checkmark")
             } else {
-                element.classList.remove("checkmark")
+                btn.classList.remove("checkmark")
             }
-        }
+        });
     }
 }
 
@@ -144,21 +144,9 @@ window.onclick = function (event) {
 }
 
 /**
- * Changes to easier difficulty if the window is too small
- * Called automatically when the window is resized
+ * Removed window.onresize check - not needed inside iframe
+ * The parent window handles sizing
  */
-window.onresize = function () {
-    if (window.innerWidth < difficulty.width) {
-        switch (difficulty.name) {
-            case "Intermediate":
-                difficulty = difficulty_presets.easy
-                break
-            case "Expert":
-                difficulty = difficulty_presets.intermediate
-        }
-        resetGame()
-    }
-}
 
 /**
  * Pauses the game and hides the game window
