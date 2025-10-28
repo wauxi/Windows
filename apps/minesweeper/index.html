@@ -13,14 +13,14 @@
     <div id="game_window">
 
         <div id="window_menu">
-            <button onclick="enableDropdown()" style="cursor: pointer;" id="difficulty_button"><u>G</u>ame</button>
+            <button style="cursor: pointer;" id="difficulty_button"><u>G</u>ame</button>
             <div id="difficulty_dropdown" class="dropdown-content">
-                <button onclick="setDifficulty(difficulty_presets.easy)">Easy</button>
-                <button onclick="setDifficulty(difficulty_presets.intermediate)">Intermediate</button>
-                <button onclick="setDifficulty(difficulty_presets.expert)">Expert</button>
+                <button data-difficulty="easy">Easy</button>
+                <button data-difficulty="intermediate">Intermediate</button>
+                <button data-difficulty="expert">Expert</button>
             </div>
 
-            <button onclick="toggleHelp()" style="cursor: help;"><u>H</u>elp</button>
+            <button id="help_button" style="cursor: help;"><u>H</u>elp</button>
         </div>
 
         <div id="white_margin">
@@ -32,7 +32,7 @@
                         <img id="flags2" src="img/digits/digit0.png">
                     </div>
                     <div id="face">
-                        <button onclick="resetGame()">
+                        <button id="reset_button">
                             <img id="smiley" src="img/ok.png">
                         </button>
                     </div>
@@ -54,7 +54,7 @@
     <div id="get_help" class="hidden">
         <div id="help_top">
             <img id="icon" src="favicon.ico">
-            <img onclick="toggleHelp()" id="help_cross" class="window_button" src="img/window_close.png">
+            <img id="help_cross" class="window_button" src="img/window_close.png">
             <p class="window_title">
                 Help
             </p>
@@ -83,7 +83,7 @@
                     The game is won when all non-mine squares have been cleared.
                 </li>
                 <li>
-                    <a id="wifemode" onclick="wifeMode()">Wife mode: OFF</a>
+                    <a id="wifemode" href="#">Wife mode: OFF</a>
                 </li>
             </ul>
             <a href="https://github.com/urluur/minesweeper-js">

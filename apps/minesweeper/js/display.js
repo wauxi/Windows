@@ -18,10 +18,15 @@ function displayGrid() {
 
             button.classList.add("field_button")
             if (playing) {
-                button.setAttribute("onclick", "clickButton(" + i + ", " + j + ")")
-                button.setAttribute("oncontextmenu", "flagButton(" + i + ", " + j + "); return false;")
-                button.setAttribute("onmousedown", 'smiley("img/wow.png")')
-                button.setAttribute("onmouseup", 'smiley("img/ok.png")')
+                // Use addEventListener instead of inline onclick
+                button.addEventListener('click', () => clickButton(i, j));
+                button.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    flagButton(i, j);
+                    return false;
+                });
+                button.addEventListener('mousedown', () => smiley("img/wow.png"));
+                button.addEventListener('mouseup', () => smiley("img/ok.png"));
             }
 
             if (grid[i][j].isFlagged) {

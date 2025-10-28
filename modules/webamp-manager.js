@@ -1,4 +1,4 @@
-import { windowState } from './window-state.js';
+import { windowManager } from './window-manager.js';
 
 class WebampManager {
   constructor() {
@@ -34,7 +34,7 @@ class WebampManager {
     try {
       const initialTracks = await this.loadPlaylist();
 
-      const zIndex = windowState.getNextZIndex();
+      const zIndex = windowManager.getNextZIndex();
 
       this.webampInstance = new window.Webamp({
         initialTracks,

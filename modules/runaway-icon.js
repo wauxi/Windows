@@ -1,4 +1,5 @@
 import { RUNAWAY_CONFIG } from './constants.js';
+import { lifecycleManager } from './lifecycle-manager.js';
 
 class RunawayIcon {
   constructor() {
@@ -21,8 +22,8 @@ class RunawayIcon {
     }
     
     this.runawayIcons.add(steamIcon);
-    steamIcon.addEventListener('mouseenter', (e) => this.escapeFromCursor(steamIcon, e));
-    document.addEventListener('mousemove', (e) => this.checkProximity(steamIcon, e));
+    lifecycleManager.addEventListener(steamIcon, 'mouseenter', (e) => this.escapeFromCursor(steamIcon, e));
+    lifecycleManager.addEventListener(document, 'mousemove', (e) => this.checkProximity(steamIcon, e));
   }
 
   checkProximity(icon, event) {
@@ -69,7 +70,7 @@ class RunawayIcon {
     
     icon.style.transform = 'scale(1.1) rotate(5deg)';
     
-    setTimeout(() => {
+    lifecycleManager.setTimeout(() => {
       icon.style.transform = 'scale(1) rotate(0deg)';
     }, this.animationDuration / 2);
   }
@@ -84,7 +85,7 @@ class RunawayIcon {
     icon.style.transition = `opacity ${RUNAWAY_CONFIG.TELEPORT_FADE_MS}ms`;
     icon.style.opacity = '0';
 
-    setTimeout(() => {
+    lifecycleManager.setTimeout(() => {
       icon.style.left = randomLeft + 'px';
       icon.style.top = randomTop + 'px';
       icon.style.opacity = '1';

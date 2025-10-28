@@ -33,18 +33,6 @@ let wifemode = false
  * @param {*} diff Must be one of presets (e.g. difficulty_presets.easy)
  */
 function setDifficulty(diff) {
-    switch (difficulty) {
-        case difficulty_presets.intermediate:
-            if (window.innerWidth < 375) {
-                return
-            }
-            break
-        case difficulty_presets.expert:
-            if (window.innerWidth < 684) {
-                return
-            }
-            break
-    }
     difficulty = diff
     resetGame()
 }
@@ -55,6 +43,77 @@ function setDifficulty(diff) {
 function toggleHelp() {
     document.getElementById("get_help").classList.toggle("hidden")
 }
+
+/**
+ * Toggles the difficulty dropdown menu
+ */
+function enableDropdown() {
+    document.getElementById("difficulty_dropdown").classList.toggle("show")
+}
+
+// Close dropdown when clicking outside
+window.onclick = function(event) {
+    if (!event.target.matches('#difficulty_button')) {
+        const dropdown = document.getElementById("difficulty_dropdown");
+        if (dropdown && dropdown.classList.contains('show')) {
+            dropdown.classList.remove('show');
+        }
+    }
+}
+
+// Initialize event listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Game button for dropdown
+    const gameBtn = document.getElementById('difficulty_button');
+    if (gameBtn) {
+        gameBtn.addEventListener('click', enableDropdown);
+    }
+    
+    // Help buttons
+    const helpBtn = document.getElementById('help_button');
+    if (helpBtn) {
+        helpBtn.addEventListener('click', toggleHelp);
+    }
+    
+    const helpCloseBtn = document.getElementById('help_cross');
+    if (helpCloseBtn) {
+        helpCloseBtn.addEventListener('click', toggleHelp);
+    }
+    
+    // Difficulty buttons with data attributes
+    const difficultyBtns = document.querySelectorAll('[data-difficulty]');
+    difficultyBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const difficulty = this.getAttribute('data-difficulty');
+            switch(difficulty) {
+                case 'easy':
+                    setDifficulty(difficulty_presets.easy);
+                    break;
+                case 'intermediate':
+                    setDifficulty(difficulty_presets.intermediate);
+                    break;
+                case 'expert':
+                    setDifficulty(difficulty_presets.expert);
+                    break;
+            }
+        });
+    });
+    
+    // Smiley face reset button
+    const resetBtn = document.getElementById('reset_button');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', resetGame);
+    }
+    
+    // Wife mode toggle
+    const wifemodeLink = document.getElementById('wifemode');
+    if (wifemodeLink) {
+        wifemodeLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            wifeMode();
+        });
+    }
+});
 
 class Square {
     constructor() {

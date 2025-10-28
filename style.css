@@ -149,6 +149,30 @@ body {
   background: rgba(0,0,0,0);
 }
 
+/* Iframe utility classes */
+.iframe-preloaded {
+  position: static !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.iframe-scaled {
+  transform: none !important;
+  transform-origin: top left !important;
+}
+
+.iframe-fullsize {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Window positioning utilities */
+.window-centered {
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
 .window.tv-modal {
   overflow: hidden;
 }

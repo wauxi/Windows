@@ -1,4 +1,6 @@
 import { APP_NAMES, SCROLLING } from './constants.js';
+import { applyIframeStyles } from './iframe-styles.js';
+import { lifecycleManager } from './lifecycle-manager.js';
 
 class IframeCreator {
   createBaseIframe(src, scrolling, preventWheel = false) {
@@ -6,16 +8,12 @@ class IframeCreator {
     iframe.src = src;
     iframe.setAttribute('frameborder', '0');
     iframe.setAttribute('scrolling', scrolling);
-    iframe.width = '100%';
-    iframe.height = '100%';
-    iframe.style.border = 'none';
-    iframe.style.display = 'block';
+    iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms');
     iframe.style.width = '100%';
     iframe.style.height = '100%';
-    iframe.style.overflow = scrolling === SCROLLING.PHOTOBOOTH_SCROLLING ? 'hidden' : 'auto';
 
     if (preventWheel) {
-      iframe.addEventListener('wheel', (e) => {
+      lifecycleManager.addEventListener(iframe, 'wheel', (e) => {
         e.preventDefault();
       }, { passive: false });
     }
@@ -29,12 +27,7 @@ class IframeCreator {
       SCROLLING.PHOTOBOOTH_SCROLLING,
       true
     );
-    iframe.style.border = 'none';
-    iframe.style.outline = 'none';
-    iframe.style.overflow = 'hidden';
-    iframe.style.overflowX = 'hidden';
-    iframe.style.overflowY = 'hidden';
-    iframe.setAttribute('scrolling', 'no');
+    applyIframeStyles(iframe, 'memories_player');
     return iframe;
   }
 
@@ -47,11 +40,13 @@ class IframeCreator {
   }
 
   createMinesweeperIframe() {
-    return this.createBaseIframe(
+    const iframe = this.createBaseIframe(
       `apps/${APP_NAMES.MINESWEEPER}/index.html`,
       SCROLLING.PHOTOBOOTH_SCROLLING,
       true
     );
+    applyIframeStyles(iframe, 'minesweeper');
+    return iframe;
   }
 
   createRegularAppIframe(appName) {
