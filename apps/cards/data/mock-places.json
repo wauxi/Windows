@@ -1,6 +1,5 @@
 {
   "results": [
-    { "name": "Kiev", "place_id": "mock_24", "rating": 5.0, "photo": "img/kiev.png", "vicinity": "Central Square", "geometry": { "location": { "lat": 53.2358, "lng": 50.2563 } } },
     { "name": "Just a Random Spot with Phainon", "place_id": "mock_3", "rating": 4.1, "photo": "img/phainon.png", "vicinity": "Unknown", "geometry": { "location": { "lat": 53.2341, "lng": 50.2542 } } },
     { "name": "Ascent", "place_id": "mock_17", "rating": 4.3, "photo": "img/ascent.png", "vicinity": "Ascent Ridge", "geometry": { "location": { "lat": 53.2351, "lng": 50.2556 } } },
     { "name": "King's Chambers", "place_id": "mock_9", "rating": 4.7, "photo": "img/undertale.png", "vicinity": "Royal Wing", "geometry": { "location": { "lat": 53.2331, "lng": 50.2527 } } },
